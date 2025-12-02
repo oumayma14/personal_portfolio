@@ -1,3 +1,4 @@
+import { AboutMe } from "../components/AboutMe";
 import { HeroSection } from "../components/HeroSection";
 import { Navbar } from "../components/Navbar";
 import { StarBackground } from "../components/StarBAckground";
@@ -12,6 +13,7 @@ export const Home = () =>{
         <Navbar />
         <main>
             <HeroSection />
+            <AboutMe/>
         </main>
     </div>    
     );

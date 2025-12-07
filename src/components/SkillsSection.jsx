@@ -10,8 +10,8 @@ const skills = [
     {name: "Angular", level: 69, category: "frontend"},
     {name: "Typescript", level: 73, category: "frontend"},
 
-    {name: "Node.js", level: 95, category: "backend"},
-    {name: "Express", level: 95, category: "backend"},
+    {name: "Node.js", level: 48, category: "backend"},
+    {name: "Express", level: 89, category: "backend"},
     {name: "Mongo", level: 95, category: "backend"},
     {name: "HTML/CSS", level: 95, category: "backend"},
 

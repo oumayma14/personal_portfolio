@@ -1,28 +1,25 @@
-import { AboutMe } from "../components/AboutMe";
-import { ContactSection } from "../components/ContactSection";
-import { Footer } from "../components/Footer";
-import { HeroSection } from "../components/HeroSection";
-import { Navbar } from "../components/Navbar";
+import { Navbar }          from "../components/Navbar";
+import { HeroSection }     from "../components/HeroSection";
+import { AboutMe }         from "../components/AboutMe";
+import { SkillsSection }   from "../components/SkillsSection";
 import { ProjectsSection } from "../components/ProjectsSection";
-import { SkillsSection } from "../components/SkillsSection";
-import { StarBackground } from "../components/StarBackground";
-import { ThemeToggle } from "../components/ThemeToggle";
+import { ContactSection }  from "../components/ContactSection";
+import { Footer }          from "../components/Footer";
+import { StarBackground }  from "../components/StarBackground";
 
-export const Home = () =>{
-    return (
-    <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-        {/* Theme Toggle */}
-        <ThemeToggle />
-        <StarBackground />
-        <Navbar />
-        <main>
-            <HeroSection />
-            <AboutMe/>
-            <SkillsSection />
-            <ProjectsSection />
-            <ContactSection />
-        </main>
-        <Footer />
-    </div>    
-    );
-};
+const Home = () => (
+  <>
+    <StarBackground />
+    <Navbar />
+    <main>
+      <HeroSection />
+      <AboutMe />
+      <SkillsSection />
+      <ProjectsSection />
+      <ContactSection />
+    </main>
+    <Footer />
+  </>
+);
+
+export default Home;

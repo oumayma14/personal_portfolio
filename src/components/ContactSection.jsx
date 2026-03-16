@@ -1,147 +1,272 @@
 import { Linkedin, Mail, MapPin, Phone, Send } from "lucide-react";
 import { cn } from "../lib/utils";
-import { toast } from "./ui/toast";
-import { useState } from "react";
-import emailjs from "@emailjs/browser"; 
+import { useState, useEffect, useRef } from "react";
+import emailjs from "@emailjs/browser";
+
+const useReveal = (threshold = 0.1) => {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      ([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  return [ref, visible];
+};
+
+const contactItems = [
+  {
+    icon: <Mail  className="h-5 w-5" />,
+    label: "EMAIL",
+    value: "oumaima0fazani@gmail.com",
+    href:  "mailto:oumaima0fazani@gmail.com",
+  },
+  {
+    icon: <Phone className="h-5 w-5" />,
+    label: "PHONE",
+    value: "+216 54 259 484",
+    href:  "tel:+21654259484",
+  },
+  {
+    icon: <MapPin className="h-5 w-5" />,
+    label: "LOCATION",
+    value: "Tunis, Tunisia",
+    href:  null,
+  },
+];
 
 export const ContactSection = () => {
+  const [sectionRef, visible] = useReveal(0.08);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState(null); // "ok" | "err"
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    const form = e.target;
-
+    setStatus(null);
     emailjs
-      .sendForm(
-        "service_z2jfyhr",   
-        "template_9v4g8cq",  
-        form,
-        "QNx3iZHS3x9vr5Nav"  
-      )
+      .sendForm("service_z2jfyhr", "template_9v4g8cq", e.target, "QNx3iZHS3x9vr5Nav")
       .then(
-        (result) => {
-          toast({
-            title: "Message sent!",
-            description: "Thank you for your message. I'll get back to you soon."
-          });
-          setIsSubmitting(false);
-          form.reset();
-        },
-        (error) => {
-          toast({
-            title: "Error",
-            description: "Message could not be sent. Please try again later."
-          });
-          setIsSubmitting(false);
-          console.error(error.text);
-        }
+        () => { setStatus("ok");  setIsSubmitting(false); e.target.reset(); },
+        (err) => { setStatus("err"); setIsSubmitting(false); console.error(err.text); }
       );
   };
 
   return (
-    <section className="py-24 px-4 relative bg-secondary/30" id="contact">
+    <section
+      className="py-24 px-4 relative"
+      id="contact"
+      ref={sectionRef}
+      style={{ background: "var(--cyber-bg2)" }}
+    >
       <div className="container mx-auto max-w-5xl">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center ">
-          Get In <span className="text-primary">Touch</span>
+
+        {/* heading */}
+        <h2 className={cn("section-title text-center reveal-title", visible && "revealed")}>
+          Get In <span className="hi">Touch</span>
         </h2>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Looking to collaborate or have a project to share? I’m always ready to connect and explore new opportunities.
+        <p className={cn("text-center text-muted-foreground mb-12 max-w-2xl mx-auto reveal-sub", visible && "revealed")}>
+          Looking to collaborate or have a project to share? I&apos;m always ready to connect
+          and explore new opportunities.
         </p>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="space-y-8">
-            <h3 className="text-2xl font-semibold mb-6">Contact Information</h3>
-            <div className="space-y-6 justify-center">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Mail className="h-6 w-6 text-primary" />
-                </div>
+
+          {/* ── Left — contact info ── */}
+          <div className={cn("slide-in-left space-y-4", visible && "revealed")}>
+            <h3
+              className="mb-6"
+              style={{
+                fontFamily: "var(--font-head)",
+                fontSize: ".8rem",
+                letterSpacing: ".2em",
+                color: "var(--cyber-primary)",
+                textTransform: "uppercase",
+              }}
+            >
+              // CONTACT_INFO
+            </h3>
+
+            {contactItems.map((item) => (
+              <div key={item.label} className="contact-info-item">
+                <div className="contact-icon">{item.icon}</div>
                 <div>
-                  <h4 className="font-medium">Email</h4>
-                  <a href="mailto:oumaima0@fazani@gmail.com" className="text-muted-foreground hover:text-primary transition-colors">
-                    oumaima0fazani@gmail.com
-                  </a>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: ".68rem",
+                      letterSpacing: ".12em",
+                      color: "var(--cyber-text-muted)",
+                      marginBottom: ".2rem",
+                    }}
+                  >
+                    {item.label}
+                  </p>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className="hover:text-primary transition-colors"
+                      style={{ color: "var(--cyber-text)", fontSize: ".95rem" }}
+                    >
+                      {item.value}
+                    </a>
+                  ) : (
+                    <span style={{ color: "var(--cyber-text)", fontSize: ".95rem" }}>
+                      {item.value}
+                    </span>
+                  )}
                 </div>
               </div>
-            </div>
-            <div className="space-y-6 justify-center">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Phone className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-medium">Phone</h4>
-                  <a href="tel:+21654259484" className="text-muted-foreground hover:text-primary transition-colors">
-                    +216 54 259 484
-                  </a>
-                </div>
-              </div>
-            </div>
-            <div className="space-y-6 justify-center">
-              <div className="flex items-start space-x-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <MapPin className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h4 className="font-medium">Location</h4>
-                  <a className="text-muted-foreground hover:text-primary transition-colors">Tunis, Tunisia</a>
-                </div>
-              </div>
-            </div>
-            <div className="pt-8">
-              <h4 className="font-medium mb-4">Connect with me</h4>
-              <div className="flex space-x-4 justify-center">
-                <a href="https://www.linkedin.com/in/oumayma-fazzeni-jnfj1221/" target="_blank">
-                  <Linkedin />
-                </a>
-              </div>
+            ))}
+
+            {/* socials */}
+            <div className="pt-4">
+              <p
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: ".68rem",
+                  letterSpacing: ".12em",
+                  color: "var(--cyber-text-muted)",
+                  marginBottom: ".75rem",
+                }}
+              >
+                SOCIAL_LINKS
+              </p>
+              <a
+                href="https://www.linkedin.com/in/oumayma-fazzeni-jnfj1221/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="contact-icon inline-flex hover:text-white transition-colors"
+                style={{ color: "var(--cyber-primary)" }}
+              >
+                <Linkedin className="h-5 w-5" />
+              </a>
             </div>
           </div>
 
-          <div className="bg-card p-8 rounded-lg shadow-xs">
-            <h3 className="text-2xl font-semibold mb-6">Send a Message</h3>
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium mb-2">Your Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="user_name" 
-                  required
-                  className="w-full px-4 py-3 rounded-md border border-input bg-background focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  placeholder="Your name..."
-                />
-                <label htmlFor="email" className="block text-sm font-medium mb-2">Your Email</label>
-                <input
-                  type="email"
-                  id="email"
-                  name="user_email" 
-                  required
-                  className="w-full px-4 py-3 rounded-md border border-input bg-background focus:outline-hidden focus:ring-2 focus:ring-primary"
-                  placeholder="example@gmail.com"
-                />
-                <label htmlFor="message" className="block text-sm font-medium mb-2">Your Message</label>
-                <textarea
-                  id="message"
-                  name="message" 
-                  required
-                  className="w-full px-4 py-3 rounded-md border border-input bg-background focus:outline-hidden focus:ring-2 focus:ring-primary resize-none"
-                  placeholder="Hello I would like to reach you out..."
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className={cn(
-                  "cosmic-button w-full flex items-center justify-center gap-2"
-                )}
+          {/* ── Right — form ── */}
+          <div
+            className={cn("stagger-card", visible && "revealed")}
+            style={{ transitionDelay: "200ms" }}
+          >
+            <div className="cyber-card p-8">
+              <h3
+                className="mb-6"
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: ".8rem",
+                  letterSpacing: ".2em",
+                  color: "var(--cyber-primary)",
+                }}
               >
-                {isSubmitting ? "Sending..." : "Send Message"}
-                <Send size={16} />
-              </button>
-            </form>
+                // SEND_MESSAGE
+              </h3>
+
+              <form className="space-y-5" onSubmit={handleSubmit}>
+
+                {/* name */}
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block mb-1"
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: ".68rem",
+                      letterSpacing: ".12em",
+                      color: "var(--cyber-text-muted)",
+                    }}
+                  >
+                    YOUR_NAME
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="user_name"
+                    required
+                    placeholder="Your name…"
+                    className="cyber-input w-full"
+                  />
+                </div>
+
+                {/* email */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block mb-1"
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: ".68rem",
+                      letterSpacing: ".12em",
+                      color: "var(--cyber-text-muted)",
+                    }}
+                  >
+                    YOUR_EMAIL
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="user_email"
+                    required
+                    placeholder="you@example.com"
+                    className="cyber-input w-full"
+                  />
+                </div>
+
+                {/* message */}
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block mb-1"
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: ".68rem",
+                      letterSpacing: ".12em",
+                      color: "var(--cyber-text-muted)",
+                    }}
+                  >
+                    YOUR_MESSAGE
+                  </label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    required
+                    placeholder="Hello, I'd like to…"
+                    className="cyber-input w-full"
+                    style={{ minHeight: 120, resize: "vertical" }}
+                  />
+                </div>
+
+                {/* status messages */}
+                {status === "ok" && (
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: ".8rem", color: "var(--cyber-primary)" }}>
+                    ✓ Message transmitted successfully.
+                  </p>
+                )}
+                {status === "err" && (
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: ".8rem", color: "var(--cyber-accent2)" }}>
+                    ✗ Transmission failed. Please try again.
+                  </p>
+                )}
+
+                {/* submit */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={cn("cyber-btn w-full justify-center", isSubmitting && "opacity-60 cursor-not-allowed")}
+                >
+                  <span className="flex items-center gap-2 justify-center w-full">
+                    {isSubmitting ? "Transmitting…" : "Send Message"}
+                    <Send size={14} />
+                  </span>
+                </button>
+
+              </form>
+            </div>
           </div>
+
         </div>
       </div>
     </section>

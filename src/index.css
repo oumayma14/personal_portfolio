@@ -717,3 +717,19 @@ textarea.cyber-input { resize:vertical; min-height:120px; }
 :root:not(.dark) .dot.green  { background: #28c840 !important; }
 :root:not(.dark) .terminal-body .term-line { color: #e2e8f0 !important; }
 :root:not(.dark) .terminal-body .prompt    { color: #00d4ff !important; }
+
+/* ── Hero stat pills light mode ─────────────────── */
+:root:not(.dark) .stat-pill {
+  background: #fff !important;
+  border-color: #cbd5e1 !important;
+}
+:root:not(.dark) .stat-pill:hover {
+  border-color: var(--cyber-primary) !important;
+  background: rgba(79,70,229,.06) !important;
+}
+:root:not(.dark) .stat-val   { color: var(--cyber-primary) !important; }
+:root:not(.dark) .stat-label { color: #64748b !important; }
+
+/* ── cyber-btn hover text visibility ────────────── */
+:root:not(.dark) .cyber-btn:hover        { color: #fff !important; }
+:root:not(.dark) .cyber-btn.accent:hover { color: #fff !important; }
